@@ -116,23 +116,27 @@ function zombie(e){const w=Math.round(Math.sin(t/6+e.sx)*3);person(e.x,e.y,P.zom
 function ak(){X.save();X.translate(pl.x,pl.y-26-(bike?8:0));X.rotate(aim);if(Math.cos(aim)<0)X.scale(1,-1);X.fillStyle='#6b3a1c';X.fillRect(-18,-2,10,5);X.fillStyle='#2b2b2b';X.fillRect(-8,-3,16,6);X.fillRect(8,-2,26,3);X.fillStyle='#444';X.fillRect(2,3,5,10);X.fillStyle='#6b3a1c';X.fillRect(10,-4,10,3);X.restore()}
 function hit(x,y,c,n){for(let i=0;i<n;i++)pt.push({x,y,vx:(Math.random()-.5)*4,vy:-Math.random()*3,l:25+Math.random()*15,c})}
 const NV={mik:0,nat:2,cha:5,pat:6,opa:7},TALK=[0,2,5,6,7];
-const LP={x:2250,y:1100,a:0},DZ={x:230,y:1100},RB=[[1500,1050,110,56],[1050,1100,110,56]];
+const LP={x:2250,y:1100,a:0},DZ={x:230,y:1100},RB=[[2050,1048,110,60],[1850,1096,110,60],[1500,940,60,300],[700,1048,110,60],[450,1096,110,60]];
+let TRF=[];const onRoad=(x,y)=>(y>1028&&y<1172)||(y>408&&y<552)||(x>868&&x<992)||(x>1868&&x<1992);
 const SAY=['STOP, LUUK!','REM, JONGEN, REM!','Ik had vandaag vrij!','Mijn koffie wordt koud!','Dit komt in mijn rapport!','Is dat een Lamborghini?!'];
-function carBody(x,y,a,kind){X.save();X.translate(Math.round(x),Math.round(y));X.fillStyle='rgba(0,0,0,.35)';X.beginPath();X.ellipse(0,6,38,14,0,0,7);X.fill();X.rotate(a);
+function carBody(x,y,a,kind,col){X.save();X.translate(Math.round(x),Math.round(y));X.fillStyle='rgba(0,0,0,.35)';X.beginPath();X.ellipse(0,6,38,14,0,0,7);X.fill();X.rotate(a);
  X.fillStyle='#111';for(const o of[[-24,-18],[12,-18],[-24,12],[12,12]])X.fillRect(o[0],o[1],14,6);
- if(kind==='lambo'){X.fillStyle='#ff9d00';X.beginPath();X.moveTo(-36,-14);X.lineTo(16,-14);X.lineTo(36,-5);X.lineTo(36,5);X.lineTo(16,14);X.lineTo(-36,14);X.closePath();X.fill();X.fillStyle='#1b1b2a';X.fillRect(-6,-9,20,18);X.fillStyle='#ffcf66';X.fillRect(-30,-10,10,20);X.fillStyle='#fff7a0';X.fillRect(33,-9,3,4);X.fillRect(33,5,3,4);X.fillStyle='#e22';X.fillRect(-37,-12,2,24)}
+ if(kind==='civ'){X.fillStyle=col;X.fillRect(-32,-14,64,28);X.fillStyle='#1b1b2a';X.fillRect(-8,-10,22,20);X.fillStyle='#fff7a0';X.fillRect(30,-10,2,4);X.fillRect(30,6,2,4);X.fillStyle='#e22';X.fillRect(-33,-12,2,24)}else if(kind==='lambo'){X.fillStyle='#ff9d00';X.beginPath();X.moveTo(-36,-14);X.lineTo(16,-14);X.lineTo(36,-5);X.lineTo(36,5);X.lineTo(16,14);X.lineTo(-36,14);X.closePath();X.fill();X.fillStyle='#1b1b2a';X.fillRect(-6,-9,20,18);X.fillStyle='#ffcf66';X.fillRect(-30,-10,10,20);X.fillStyle='#fff7a0';X.fillRect(33,-9,3,4);X.fillRect(33,5,3,4);X.fillStyle='#e22';X.fillRect(-37,-12,2,24)}
  else{X.fillStyle='#fff';X.fillRect(-34,-15,68,30);X.fillStyle='#0a3d91';X.fillRect(-34,-4,68,8);X.fillStyle='#1b1b2a';X.fillRect(-8,-10,22,20);const f=(t>>3)&1;X.fillStyle=f?'#2a6bff':'#ff2a2a';X.fillRect(-3,-12,6,12);X.fillStyle=f?'#ff2a2a':'#2a6bff';X.fillRect(-3,0,6,12);X.fillStyle='#fff7a0';X.fillRect(33,-10,2,4);X.fillRect(33,6,2,4)}
  X.restore()}
 function carStep(dx,dy){const c=car;
- if(dx||dy){let df=Math.atan2(dy,dx)-c.a;while(df>Math.PI)df-=6.2832;while(df<-Math.PI)df+=6.2832;const tr=.03+.04*Math.min(1,c.sp/3);c.a+=Math.max(-tr,Math.min(tr,df));c.sp+=Math.abs(df)<1.3?.22:-.15}else c.sp*=.97;
- c.sp=Math.max(0,Math.min(6.6,c.sp));
+ if(dx||dy){let df=Math.atan2(dy,dx)-c.a;while(df>Math.PI)df-=6.2832;while(df<-Math.PI)df+=6.2832;const tr=(.03+.04*Math.min(1,c.sp/3))*(1-.05*Math.max(0,c.sp-3.5));c.a+=Math.max(-tr,Math.min(tr,df));c.sp+=Math.abs(df)<1.3?.22:-.15}else c.sp*=.97;
+ c.sp=Math.max(0,Math.min(onRoad(c.x,c.y)?6.6:5.2,c.sp));
  const nx=c.x+Math.cos(c.a)*c.sp,ny=c.y+Math.sin(c.a)*c.sp;
  if(!blocked(nx,c.y,18))c.x=nx;else{if(c.sp>3)thud();c.sp*=.5}
  if(!blocked(c.x,ny,18))c.y=ny;else{if(c.sp>3)thud();c.sp*=.5}
  pl.x=c.x;pl.y=c.y;pl.w=0;if(t%7===0)tone(55+c.sp*16,.09,'sawtooth',.03)}
-function chase(){const r=rn,dx=car.x-r.x,dy=car.y-r.y,d=Math.hypot(dx,dy);
+function trafficStep(){for(const q of TRF){if(q.ax)q.y+=q.v*q.d;else q.x+=q.v*q.d;const pp=q.ax?q.y:q.x;if(pp<q.min||pp>q.max)q.d*=-1;
+  for(const c of[car,rn]){const dx=c.x-q.x,dy=c.y-q.y,d=Math.hypot(dx,dy);if(d<34&&d>0){c.sp*=.4;if(!blocked(c.x+dx/d*4,c.y+dy/d*4,18)){c.x+=dx/d*4;c.y+=dy/d*4}if((c.hc||0)<=0){c.hc=25;if(c===car){tone(380,.18,'square',.07);thud()}}}}}
+ car.hc=(car.hc||0)-1;rn.hc=(rn.hc||0)-1}
+function chase(){trafficStep();const r=rn,dx=car.x-r.x,dy=car.y-r.y,d=Math.hypot(dx,dy);
  let df=Math.atan2(dy,dx)+r.off-r.a;while(df>Math.PI)df-=6.2832;while(df<-Math.PI)df+=6.2832;
- r.a+=Math.max(-.05,Math.min(.05,df));r.sp=Math.min(5.7,r.sp+.12);
+ r.a+=Math.max(-.05,Math.min(.05,df));r.sp=Math.min(5.6,r.sp+.12);
  const nx=r.x+Math.cos(r.a)*r.sp,ny=r.y+Math.sin(r.a)*r.sp;
  if(!blocked(nx,r.y,18))r.x=nx;else r.sp*=.4;if(!blocked(r.x,ny,18))r.y=ny;else r.sp*=.4;
  if(r.sp<1.2)r.st++;else{r.st=0;r.off=0}if(r.st>25)r.off=(Math.floor(t/50)%2?1.7:-1.7);
@@ -140,7 +144,7 @@ function chase(){const r=rn,dx=car.x-r.x,dy=car.y-r.y,d=Math.hypot(dx,dy);
  if(--r.sayT<-150){r.say=SAY[Math.floor(Math.random()*SAY.length)];r.sayT=100}
  if(d<34){state='wasted';wt=150;wtype=1;[800,600,800,600].forEach((f,i)=>tone(f,.25,'sine',.1,0,i*.25));return}
  if(Math.hypot(car.x-DZ.x,car.y-DZ.y)<80)deliver()}
-function startChase(){inCar=1;car={x:LP.x,y:LP.y,a:Math.PI,sp:0};rn={x:LP.x+420,y:LP.y,a:Math.PI,sp:0,st:0,off:0,say:'',sayT:-100};pl.x=car.x;pl.y=car.y}
+function startChase(){TRF=[[1730,1070,0,2.0,1620,1840,-1],[1240,1130,0,2.6,1000,1480,1],[1240,1070,0,2.2,1000,1480,-1],[905,780,1,2.4,560,1000,1],[1955,780,1,2.4,580,1000,-1]].map((a,i)=>({x:a[0],y:a[1],ax:a[2],v:a[3],min:a[4],max:a[5],d:a[6],col:['#2a9d8f','#e9c46a','#8d99ae','#e76f51','#6a4c93'][i]}));inCar=1;car={x:LP.x,y:LP.y,a:Math.PI,sp:0};rn={x:LP.x+420,y:LP.y,a:Math.PI,sp:0,st:0,off:0,say:'',sayT:-100};pl.x=car.x;pl.y=car.y}
 function deliver(){inCar=0;rn=null;pl.x=DZ.x;pl.y=DZ.y+70;pl.d=-1;dlg={l:DL.nat2,i:0,c:0,k:'nat2'};bell()}
 // ====== wereld ======
 const B=[[60,60,300,200,'#b8654a','THUIS'],[520,60,260,180,'#d8c9a8','SUPERMARKT'],[1000,60,300,200,'#9a5a42','DE LEEGHOOFD'],[1450,60,280,220,'#c9b99a','ZORGFLAT'],[2050,60,300,200,'#d8c9a8','BIBLIOTHEEK'],[2450,60,260,220,'#9a5a42','KERK'],
@@ -240,7 +244,8 @@ function world(cx,cy){
  if(obj>=7)L.push([CAR.y+CAR.h,()=>dacia(CAR.x,CAR.y)]);
  if(obj===3&&!inCar)L.push([LP.y+14,()=>carBody(LP.x,LP.y,LP.a,'lambo')]);
  if(obj>=5||(obj===4&&!inCar))L.push([DZ.y+14,()=>carBody(DZ.x,DZ.y,Math.PI,'lambo')]);
- if(obj===3||obj===4)RB.forEach(r=>L.push([r[1]+r[3],()=>{carBody(r[0]+55,r[1]+28,0,'police');X.fillStyle='#ff7a00';for(const cx2 of[r[0]-4,r[0]+114]){X.beginPath();X.moveTo(cx2,r[1]+56);X.lineTo(cx2+8,r[1]+56);X.lineTo(cx2+4,r[1]+44);X.fill()}}]));
+ if(obj===3||obj===4)RB.forEach(r=>L.push([r[1]+r[3],()=>{const v=r[3]>r[2];if(v){for(let yy=r[1]+30;yy<r[1]+r[3];yy+=60)carBody(r[0]+30,yy,Math.PI/2,'police')}else carBody(r[0]+55,r[1]+28,0,'police');X.fillStyle='#ff7a00';for(const q of v?[[r[0]+30,r[1]-6],[r[0]+30,r[1]+r[3]+14]]:[[r[0]-4,r[1]+56],[r[0]+114,r[1]+56]]){X.beginPath();X.moveTo(q[0]-5,q[1]);X.lineTo(q[0]+5,q[1]);X.lineTo(q[0],q[1]-13);X.fill()}}]));
+ if(obj===4&&inCar)TRF.forEach(q=>L.push([q.y+14,()=>carBody(q.x,q.y,q.ax?(q.d>0?Math.PI/2:-Math.PI/2):(q.d>0?0:Math.PI),'civ',q.col)]));
  if(rn&&inCar)L.push([rn.y+14,()=>{carBody(rn.x,rn.y,rn.a,'police');X.font='bold 12px Arial';X.textAlign='center';X.fillStyle='#fff';X.shadowColor='#000';X.shadowBlur=4;X.fillText('René',rn.x,rn.y-30);X.shadowBlur=0;if(rn.sayT>0){const w=X.measureText(rn.say).width+14;X.fillStyle='#fff';X.fillRect(rn.x-w/2,rn.y-62,w,20);X.fillStyle='#c00';X.fillText(rn.say,rn.x,rn.y-48)}}]);L.push([340,()=>seat(380,300)]);
  for(const k in N){const n=N[k];if(obj<NV[k])continue;L.push([n.y,()=>{if(t-(n.t0||-99)<45){X.strokeStyle='#ffd400';X.lineWidth=3;X.beginPath();X.ellipse(n.x,n.y-30,(t-n.t0)*1.2,(t-n.t0)*1.6,0,0,7);X.stroke()}person(n.x,n.y,n.p,0);X.font='bold 12px '+F;X.textAlign='center';X.fillStyle='#fff';X.shadowColor='#000';X.shadowBlur=4;X.fillText(n.n,n.x,n.y-78);X.shadowBlur=0}])}
  if(obj===1)en.forEach(e=>{if(!e.dead)L.push([e.y,()=>zombie(e)])});
@@ -256,7 +261,7 @@ function hud(){
  if(obj===1){X.fillStyle='#fff';X.fillText('Zombie pieten '+en.filter(e=>e.dead).length+'/'+en.length,20,60);X.fillStyle=(t>>3)&1?'#ff4fa3':'#fff';X.fillText('★ ★ ★  ZOMBIE PIETEN ACHTER JE AAN!',20,86)}
  if(gun&&obj===1){X.fillStyle='#ff9ad0';X.font='16px Arial';X.fillText(touchMode?'Schieten: SCHIET-knop (richt automatisch)':'Richten: muis  |  Schieten: klik of F (auto-richten)',190,H-14);X.font='20px '+F}
  if(bike){X.fillStyle='#ff9ad0';X.fillText('Racefiets actief',20,H-20)}
- if(obj===4&&inCar&&rn){const d=Math.round(Math.hypot(car.x-rn.x,car.y-rn.y)/10);X.fillStyle=(t>>3)&1?'#2a6bff':'#ff2a2a';X.fillText('★ ★ ★ ★  RENÉ ZIT ACHTER JE AAN!  ('+d+' m)',20,60);X.fillStyle='#fff';X.fillText('Breng de Lamborghini naar Nathan (zuidwesten)',20,86)}
+ if(obj===4&&inCar&&rn){const d=Math.round(Math.hypot(car.x-rn.x,car.y-rn.y)/10);X.fillStyle=(t>>3)&1?'#2a6bff':'#ff2a2a';X.fillText('★ ★ ★ ★  RENÉ ZIT ACHTER JE AAN!  ('+d+' m)',20,60);X.fillStyle='#fff';X.fillText('Breng de Lamborghini naar Nathan (zuidwesten). Pas op voor verkeer en wegblokkades!',20,86)}
  X.textAlign='right';X.fillStyle='#fff';X.fillText('€ '+(obj*1000+en.filter(e=>e.dead).length*50),W-20,34);X.shadowBlur=0;
  const tg=target();
  {const mw=150,mh=Math.round(150*WH/WW),mxp=W-mw-12,myp=46,sc=mw/WW;X.fillStyle='rgba(20,0,40,.65)';X.fillRect(mxp,myp,mw,mh);X.fillStyle='#888';[[0,420,WW,120],[0,1040,WW,120],[880,0,100,WH],[1880,0,100,WH]].forEach(r=>X.fillRect(mxp+r[0]*sc,myp+r[1]*sc,Math.max(1,r[2]*sc),Math.max(1,r[3]*sc)));X.fillStyle='#a4532f';B.forEach(b=>X.fillRect(mxp+b[0]*sc,myp+b[1]*sc,b[2]*sc,b[3]*sc));
