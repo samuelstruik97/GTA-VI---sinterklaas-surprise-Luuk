@@ -39,7 +39,7 @@ function touchUI(){if(!touchMode||state!=='play'||dlg)return;X.save();X.globalAl
 let AC=null,mute=false;
 function ac(){if(!AC){try{AC=new(window.AudioContext||window.webkitAudioContext)()}catch(e){}}if(AC&&AC.state==='suspended')AC.resume();return AC}
 // Rechtenvrije, echte opnames (publiek domein / CC0) voor online spelen via GitHub Pages.
-const REC={siren:'https://upload.wikimedia.org/wikipedia/commons/transcoded/b/b2/Whelen.ogg/Whelen.ogg.mp3',engine:'https://upload.wikimedia.org/wikipedia/commons/transcoded/3/34/Rover-v8-rr79.ogg/Rover-v8-rr79.ogg.mp3',shot:'https://upload.wikimedia.org/wikipedia/commons/transcoded/e/ee/Gunshots_8.ogg/Gunshots_8.ogg.mp3'};
+const REC={siren:'https://upload.wikimedia.org/wikipedia/commons/transcoded/b/b2/Whelen.ogg/Whelen.ogg.mp3',engine:'https://upload.wikimedia.org/wikipedia/commons/transcoded/3/34/Rover-v8-rr79.ogg/Rover-v8-rr79.ogg.mp3'};
 const REC_AUDIO=Object.fromEntries(Object.entries(REC).map(([k,u])=>{const a=new Audio(u);a.preload='auto';return[k,a]}));let engineAudio=null,sirenAudio=null;
 function sample(k,v=.35,rate=1){if(mute)return;const a=REC_AUDIO[k];a.pause();try{a.currentTime=0}catch(e){}clearTimeout(a._stopTimer);a.volume=v;a.playbackRate=rate;a.play().catch(()=>{});if(k==='shot')a._stopTimer=setTimeout(()=>{a.pause();a.currentTime=0},420);return a}
 function primeSamples(){Object.values(REC_AUDIO).forEach(a=>{a.muted=true;a.play().then(()=>{a.pause();a.currentTime=0;a.muted=false}).catch(()=>{a.muted=false})})}
@@ -55,7 +55,7 @@ const blip=()=>{noise(.045,.035,500,2000);tone(540,.055,'sine',.025,720)},coin=(
  bell=()=>[0,.18,.36].forEach(d=>tone(1750,.24,'sine',.09,0,d)),jingle=()=>[523,659,784,1047].forEach((f,i)=>tone(f,.22,'sine',.1,0,i*.1)),
  wastedSnd=()=>{noise(.9,.12,35,430);[392,370,349,311].forEach((f,i)=>tone(f,.42,'sine',.065,f*.92,i*.27))},fanfare=()=>[523,523,523,659,784,659,784,1047].forEach((f,i)=>tone(f,.25,'triangle',.13,0,i*.13)),
  startSnd=()=>[330,440,554].forEach((f,i)=>tone(f,.18,'sine',.08,0,i*.08));
-const shot=()=>sample('shot',.42,.94+Math.random()*.12),thud=()=>{noise(.07,.06,70,650)},boom=()=>{noise(.38,.15,45,900)},groan=()=>{noise(.3,.04,110,620)},cock=()=>{noise(.035,.05,1500,4800);tone(220,.07,'sine',.04,150,.04)};
+const shot=()=>tone(300,.06,'sawtooth',.05,60),thud=()=>{noise(.07,.06,70,650)},boom=()=>{noise(.38,.15,45,900)},groan=()=>{noise(.3,.04,110,620)},cock=()=>{noise(.035,.05,1500,4800);tone(220,.07,'sine',.04,150,.04)};
 const VOI={Nathan:145,'René':105,Luuk:135,Mikaela:230,Charlotte:200,'Oma Ria':245,'Opa Pollie':92};
 let spokeAt=-999;
 function babble(n){if(mute||!window.speechSynthesis||t-spokeAt<105)return;spokeAt=t;const u=new SpeechSynthesisUtterance(['mhm...','eh ja...','hmm...'][Math.floor(Math.random()*3)]);u.lang='nl-NL';u.volume=.16;u.rate=n==='Oma Ria'||n==='Opa Pollie'?1.05:1.45;u.pitch=n==='Mikaela'||n==='Charlotte'?1.3:.82;window.speechSynthesis.speak(u)}
